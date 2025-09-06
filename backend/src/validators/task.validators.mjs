@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-export const taskScmea = z.object({
+export const taskSchema = z.object({
     title: z.string().min(3, "minimum length of 3"),
     description: z.string().optional(),
     assignee: z.number().optional(),

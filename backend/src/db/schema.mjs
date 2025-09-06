@@ -19,6 +19,7 @@ export const projects = sqliteTable("projects", {
     .references(() => users.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`CURRENT_TIMESTAMP`),
+    deleted: integer("deleted").default(0),
 });
 
 export const projectMembers = sqliteTable("project_members", {
@@ -32,6 +33,7 @@ export const projectMembers = sqliteTable("project_members", {
   role: text("role").default("member"),
   addedAt: integer("added_at", { mode: "timestamp" })
     .default(sql`CURRENT_TIMESTAMP`),
+    deleted: integer("deleted").default(0),
 });
 
 export const tasks = sqliteTable("tasks", {
@@ -46,4 +48,13 @@ export const tasks = sqliteTable("tasks", {
   status: text("status").default("To-Do"), // To-Do, In Progress, Done
   createdAt: integer("created_at", { mode: "timestamp" })
     .default(sql`CURRENT_TIMESTAMP`),
+  deleted: integer("deleted").default(0),
+});
+
+export const notifications= sqliteTable("notifications",{
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("assignee").references(() => users.id, { onDelete: "set null" }),
+    type: text("type").default("Task ASSIGNED"),
+    message: text("message"),
+    isRead: integer("is_read").default(0),
 });

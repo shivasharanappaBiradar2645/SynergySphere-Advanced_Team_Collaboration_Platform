@@ -1,5 +1,5 @@
 import { db } from "../db/connection.mjs";
-import { tasks } from "../db/schema.mjs";
+import { projects, tasks } from "../db/schema.mjs";
 import { eq } from "drizzle-orm";
 
 
@@ -25,10 +25,34 @@ export const createTask = async (req, res) => {
 
 export const listTasks = async (req, res) => {
   try {
-    const { projectId } = req.params;
-    const result = await db.select().from(tasks).where(eq(tasks.projectId, +projectId));
+    const { projectId } = req.body;
+    const result = await db.select().from(tasks).where(and(eq(tasks.projectId, projectId),eq(tasks.deleted,0)));
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const updateTasks = async (req, res) => {
+    try{
+        const {taskId, newStatus} = req.body;
+        await db.update(tasks).values({
+            status: newStatus
+        }).where(eq(taskId,tasks.id));
+        res.json({message: "success"});
+    } catch(err){
+        res.status(500).json({error: err.message});
+    }
+}
+
+export const deleteTasks = async (req,res) => {
+    try{
+        const {taskId} = req.body;
+        await db.update(tasks).set({deleted: 1}).where(
+            eq(taskId,tasks.id)
+        );
+        res.json({message:"deleted"})
+    }catch(err){
+        res.status(500).json({error: err.message})
+    }
+}
