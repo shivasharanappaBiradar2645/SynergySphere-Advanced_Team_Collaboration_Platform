@@ -1,4 +1,5 @@
 import {PanelLeft} from 'lucide-react';
+import Sidebar from "../components/sidebar.jsx"
 
 export default function Projects() {
 
@@ -43,7 +44,7 @@ export default function Projects() {
                     absolute top-0 left-0 z-50 w-3/4 h-full bg-white
                 `}
             >
-                {/* sidebar content */}
+              <Sidebar/>
             </div>
 
             {/*main*/}

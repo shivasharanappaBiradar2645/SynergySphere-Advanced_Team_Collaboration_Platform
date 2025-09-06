@@ -1,12 +1,10 @@
-import Sidebar from "../src/components/sidebar"
+import Projects from "./pages/Projects.jsx";
 
 function App() {
-    
-
     return (
-    <div >
-    <Sidebar/>
-    </div>
+        <>
+            <Projects/>
+        </>
     )
 }
 
