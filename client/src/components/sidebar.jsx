@@ -1,15 +1,24 @@
-import { Home, Folder, CheckSquare, Bell, Settings, Moon } from "lucide-react";
+import {
+  Home,
+  Folder,
+  CheckSquare,
+  Bell,
+  Settings,
+  Moon,
+  Users,
+} from "lucide-react";
 
 export default function Sidebar() {
   return (
-    <aside className="h-screen w-64 bg-neutral-900 text-neutral-200 flex flex-col">
-      {/* Logo Section */}
-      <div className="p-4 text-lg font-semibold tracking-wide">
+    <aside className="h-screen w-122 bg-neutral-900 text-neutral-200 flex flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-2 p-4 text-lg font-semibold tracking-wide">
+        <Users className="h-6 w-6 text-blue-400" />
         <span className="text-blue-400">SynergySphere</span>
       </div>
 
-      {/* Nav Links */}
-      <nav className="flex-1 px-3 space-y-2">
+      {/* Menu */}
+      <nav className="flex-1 px-2 space-y-2">
         <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
           <Home className="h-5 w-5" /> Home
         </button>
@@ -22,15 +31,15 @@ export default function Sidebar() {
         <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
           <Bell className="h-5 w-5" /> Notifications
         </button>
-        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
-          <Settings className="h-5 w-5" /> Settings
-        </button>
       </nav>
 
-      {/* Dark Mode Toggle */}
-      <div className="px-3 mb-4">
+      {/* Bottom Section */}
+      <div className="px-2 mb-4 space-y-2">
         <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition">
           <Moon className="h-5 w-5" /> Dark Mode
+        </button>
+        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
+          <Settings className="h-5 w-5" /> Settings
         </button>
       </div>
 
