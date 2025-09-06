@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        .section h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Test</h1>
+
+        <div class="section">
+            <h2>Register</h2>
+            <form id="register-form">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>Notifications</h2>
+            <button id="notification-stream-btn">Connect to Notification Stream</button>
+            <ul id="notifications-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>Create Project</h2>
+            <form id="create-project-form">
+                <input type="text" name="name" placeholder="Project Name" required>
+                <input type="text" name="description" placeholder="Description">
+                <input type="text" name="tags" placeholder="Tags (comma-separated)">
+                <input type="file" name="image">
+                <button type="submit">Create Project</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>List Projects</h2>
+            <button id="list-projects-btn">List Projects</button>
+            <ul id="projects-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>Project Members</h2>
+            <form id="add-member-form">
+                <input type="number" name="projectId" placeholder="Project ID" required>
+                <input type="number" name="userId" placeholder="User ID" required>
+                <input type="text" name="role" placeholder="Role" value="member">
+                <button type="submit">Add Member</button>
+            </form>
+            <form id="remove-member-form">
+                <input type="number" name="projectId" placeholder="Project ID" required>
+                <input type="number" name="userId" placeholder="User ID" required>
+                <button type="submit">Remove Member</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>Create Task</h2>
+            <form id="create-task-form">
+                <input type="number" name="projectId" placeholder="Project ID" required>
+                <input type="text" name="title" placeholder="Task Title" required>
+                <input type="text" name="description" placeholder="Description">
+                <input type="number" name="assignee" placeholder="Assignee User ID">
+                <input type="text" name="dueDate" placeholder="Due Date (YYYY-MM-DD)">
+                <select name="status">
+                    <option value="To-Do">To-Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Done">Done</option>
+                </select>
+                <button type="submit">Create Task</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>List Tasks</h2>
+            <form id="list-tasks-form">
+                <input type="number" name="projectId" placeholder="Project ID" required>
+                <button type="submit">List Tasks</button>
+            </form>
+            <ul id="tasks-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>Discussions</h2>
+            <form id="discussion-form">
+                <select name="action">
+                    <option value="create">Create Discussion</option>
+                    <option value="list">List Discussions</option>
+                </select>
+                <input type="number" name="projectId" placeholder="Project ID" required>
+                <input type="text" name="title" placeholder="Discussion Title">
+                <button type="submit">Submit</button>
+            </form>
+            <ul id="discussions-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>Discussion Messages</h2>
+            <form id="add-message-form">
+                <input type="number" name="discussionId" placeholder="Discussion ID" required>
+                <input type="text" name="message" placeholder="Message" required>
+                <button type="submit">Add Message</button>
+            </form>
+            <form id="list-messages-form">
+                <input type="number" name="discussionId" placeholder="Discussion ID" required>
+                <button type="submit">List Messages</button>
+            </form>
+            <ul id="messages-list"></ul>
+        </div>
+
+        <div class="section">
+            <h2>Get All Users</h2>
+            <button id="get-users-btn">Get Users</button>
+            <ul id="users-list"></ul>
+        </div>
+
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let token = '';
+
+        const registerForm = document.getElementById('register-form');
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(registerForm);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch(`${API_URL}/users/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            console.log(result);
+            alert(result.message || result.error);
+        });
+
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(loginForm);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch(`${API_URL}/users/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                token = result.data.token;
+                alert('Logged in successfully');
+            } else {
+                alert(result.error);
+            }
+            console.log(result);
+        });
+
+        const notificationStreamBtn = document.getElementById('notification-stream-btn');
+        const notificationsList = document.getElementById('notifications-list');
+        notificationStreamBtn.addEventListener('click', () => {
+            const eventSource = new EventSource(`${API_URL}/notifications/stream?token=${token}`);
+            eventSource.onmessage = (event) => {
+                const notification = JSON.parse(event.data);
+                const li = document.createElement('li');
+                li.textContent = notification.message;
+                notificationsList.appendChild(li);
+            };
+            eventSource.onerror = (err) => {
+                console.error('EventSource failed:', err);
+                eventSource.close();
+            };
+        });
+
+        const createProjectForm = document.getElementById('create-project-form');
+        createProjectForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(createProjectForm);
+
+            const response = await fetch(`${API_URL}/projects/create`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+            console.log(result);
+            alert(result.data ? 'Project created' : result.error);
+        });
+
+        const listProjectsBtn = document.getElementById('list-projects-btn');
+        const projectsList = document.getElementById('projects-list');
+        listProjectsBtn.addEventListener('click', async () => {
+            const response = await fetch(`${API_URL}/projects/list`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                projectsList.innerHTML = '';
+                result.data.forEach(project => {
+                    const li = document.createElement('li');
+                    li.textContent = `${project.id}: ${project.name}`;
+                    projectsList.appendChild(li);
+                });
+            } else {
+                alert(result.error);
+            }
+            console.log(result);
+        });
+
+        const addMemberForm = document.getElementById('add-member-form');
+        addMemberForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addMemberForm);
+            const data = Object.fromEntries(formData.entries());
+            const projectId = data.projectId;
+
+            const response = await fetch(`${API_URL}/projects/${projectId}/members`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            console.log(result);
+            alert(result.message || result.error);
+        });
+
+        const removeMemberForm = document.getElementById('remove-member-form');
+        removeMemberForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(removeMemberForm);
+            const data = Object.fromEntries(formData.entries());
+            const projectId = data.projectId;
+            const userId = data.userId;
+
+            const response = await fetch(`${API_URL}/projects/${projectId}/members/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const result = await response.json();
+            console.log(result);
+            alert(result.message || result.error);
+        });
+
+        const createTaskForm = document.getElementById('create-task-form');
+        createTaskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(createTaskForm);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch(`${API_URL}/tasks/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            console.log(result);
+            alert(result.data ? 'Task created' : result.error);
+        });
+
+        const listTasksForm = document.getElementById('list-tasks-form');
+        const tasksList = document.getElementById('tasks-list');
+        listTasksForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(listTasksForm);
+            const data = Object.fromEntries(formData.entries());
+            const projectId = data.projectId;
+
+            const response = await fetch(`${API_URL}/tasks/list`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ projectId })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                tasksList.innerHTML = '';
+                result.data.forEach(task => {
+                    const li = document.createElement('li');
+                    li.textContent = `${task.id}: ${task.title} (${task.status})`;
+                    tasksList.appendChild(li);
+                });
+            } else {
+                alert(result.error);
+            }
+            console.log(result);
+        });
+
+        const discussionForm = document.getElementById('discussion-form');
+        const discussionsList = document.getElementById('discussions-list');
+        discussionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(discussionForm);
+            const data = Object.fromEntries(formData.entries());
+            const action = data.action;
+
+            if (action === 'create') {
+                const response = await fetch(`${API_URL}/discussions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                console.log(result);
+                alert(result.data ? 'Discussion created' : result.error);
+            } else if (action === 'list') {
+                const projectId = data.projectId;
+                const response = await fetch(`${API_URL}/discussions/get`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ projectId })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    discussionsList.innerHTML = '';
+                    result.data.forEach(discussion => {
+                        const li = document.createElement('li');
+                        li.textContent = `${discussion.id}: ${discussion.title}`;
+                        discussionsList.appendChild(li);
+                    });
+                } else {
+                    alert(result.error);
+                }
+                console.log(result);
+            }
+        });
+
+        const addMessageForm = document.getElementById('add-message-form');
+        addMessageForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(addMessageForm);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch(`${API_URL}/discussions/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            console.log(result);
+            alert(result.data ? 'Message added' : result.error);
+        });
+
+        const listMessagesForm = document.getElementById('list-messages-form');
+        const messagesList = document.getElementById('messages-list');
+        listMessagesForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(listMessagesForm);
+            const data = Object.fromEntries(formData.entries());
+            const discussionId = data.discussionId;
+
+            const response = await fetch(`${API_URL}/discussions/messages/discussion`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ discussionId })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                messagesList.innerHTML = '';
+                result.data.forEach(message => {
+                    const li = document.createElement('li');
+                    li.textContent = message.message;
+                    messagesList.appendChild(li);
+                });
+            } else {
+                alert(result.error);
+            }
+            console.log(result);
+        });
+
+        const getUsersBtn = document.getElementById('get-users-btn');
+        const usersList = document.getElementById('users-list');
+        getUsersBtn.addEventListener('click', async () => {
+            const response = await fetch(`${API_URL}/users`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                usersList.innerHTML = '';
+                result.data.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = `${user.id}: ${user.name} (${user.email})`;
+                    usersList.appendChild(li);
+                });
+            } else {
+                alert(result.error);
+            }
+            console.log(result);
+        });
+
+    </script>
+</body>
+</html>
