@@ -10,7 +10,7 @@ import {
 
 export default function Sidebar() {
   return (
-    <aside className="h-screen w-122 bg-neutral-900 text-neutral-200 flex flex-col">
+    <aside className="h-screen col-span-2 bg-neutral-900 text-neutral-200 flex flex-col">
       {/* Header */}
       <div className="flex items-center gap-2 p-4 text-lg font-semibold tracking-wide">
         <Users className="h-6 w-6 text-blue-400" />
