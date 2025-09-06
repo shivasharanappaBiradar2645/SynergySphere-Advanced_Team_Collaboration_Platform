@@ -1,0 +1,2 @@
+# SynergySphere-Advanced_Team_Collaboration_Platform
+odooXnmit hackathon
