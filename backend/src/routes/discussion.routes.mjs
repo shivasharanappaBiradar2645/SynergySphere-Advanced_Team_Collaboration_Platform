@@ -5,8 +5,9 @@ import { isProjectMember } from "../middlewares/authz.mjs";
 
 const router = express.Router();
 
-router.route("/").post(auth, isProjectMember, createDiscussion).get(auth, isProjectMember, getDiscussions);
+router.post("/",auth, isProjectMember, createDiscussion)
+router.post("/get",auth, isProjectMember, getDiscussions);
 router.post("/messages", auth, isProjectMember, addMessage);
-router.get("/messages/:discussionId", auth, isProjectMember, getMessages);
+router.post("/messages/discussion", auth, isProjectMember, getMessages);
 
 export default router;

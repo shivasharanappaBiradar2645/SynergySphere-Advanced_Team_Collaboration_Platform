@@ -364,10 +364,13 @@
                 alert(result.data ? 'Discussion created' : result.error);
             } else if (action === 'list') {
                 const projectId = data.projectId;
-                const response = await fetch(`${API_URL}/discussions?projectId=${projectId}`, {
+                const response = await fetch(`${API_URL}/discussions/get`, {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
-                    }
+                    },
+                    body: JSON.stringify({ projectId })
                 });
 
                 const result = await response.json();
@@ -413,10 +416,13 @@
             const data = Object.fromEntries(formData.entries());
             const discussionId = data.discussionId;
 
-            const response = await fetch(`${API_URL}/discussions/messages/${discussionId}`, {
+            const response = await fetch(`${API_URL}/discussions/messages/discussion`, {
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                body: JSON.stringify({ discussionId })
             });
 
             const result = await response.json();
