@@ -9,6 +9,82 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import ProjectCards from "@/components/ProjectCards.jsx";
+
+
+const projectsList = [
+    {
+        name: "Website Redesign",
+        tags: ["UI/UX", "Frontend", "High Priority"],
+        image: "/office.jpg",
+        deadline: "2025-09-30",
+        tasks: [{ id: 1 }, { id: 2 }, { id: 3 }]
+    },
+    {
+        name: "Mobile App",
+        tags: ["React Native", "Backend"],
+        image: "/office.jpg",
+        deadline: "2025-10-15",
+        tasks: [{ id: 1 }, { id: 2 }]
+    },
+    {
+        name: "E-commerce Platform",
+        tags: ["Fullstack", "Payments", "Cloud"],
+        image: "/office.jpg",
+        deadline: "2025-11-05",
+        tasks: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+    },
+    {
+        name: "Portfolio Website",
+        tags: ["Personal", "Frontend"],
+        image: "/office.jpg",
+        deadline: "2025-08-22",
+        tasks: [{ id: 1 }]
+    },
+    {
+        name: "AI Chatbot",
+        tags: ["Machine Learning", "NLP"],
+        image: "/office.jpg",
+        deadline: "2025-12-01",
+        tasks: [{ id: 1 }, { id: 2 }, { id: 3 }]
+    },
+    {
+        name: "Marketing Dashboard",
+        tags: ["Analytics", "Charts", "Data"],
+        image: "/office.jpg",
+        deadline: "2025-09-12",
+        tasks: [{ id: 1 }, { id: 2 }]
+    },
+    {
+        name: "CRM System",
+        tags: ["Enterprise", "Backend", "Database"],
+        image: "/office.jpg",
+        deadline: "2026-01-20",
+        tasks: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }]
+    },
+    {
+        name: "Learning Platform",
+        tags: ["EdTech", "Video", "Frontend"],
+        image: "/office.jpg",
+        deadline: "2025-11-10",
+        tasks: [{ id: 1 }, { id: 2 }]
+    },
+    {
+        name: "Fitness Tracker",
+        tags: ["Mobile", "Health", "IoT"],
+        image: "/office.jpg",
+        deadline: "2025-10-25",
+        tasks: [{ id: 1 }, { id: 2 }, { id: 3 }]
+    },
+    {
+        name: "Finance Manager",
+        tags: ["FinTech", "Charts", "Security"],
+        image: "/office.jpg",
+        deadline: "2025-09-18",
+        tasks: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+    }
+];
+
 
 export default function Projects() {
 
@@ -63,12 +139,17 @@ export default function Projects() {
 
                         {/*new project*/}
                         <div className={"flex flex-row items-center justify-start"}>
-                            <Button title={"New Project"}/>
+                            <Button title={"New Project"} />
                         </div>
                     </div>
 
                     {/*projects listing*/}
-                    <div></div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {projectsList.map((project, idx) => (
+                            <ProjectCards key={idx} {...project} />
+                        ))}
+                    </div>
+
                 </div>
             </div>
         </div>
