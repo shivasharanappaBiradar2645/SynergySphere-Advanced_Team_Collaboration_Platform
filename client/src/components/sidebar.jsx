@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   Home,
   Folder,
@@ -9,6 +10,8 @@ import {
 } from "lucide-react";
 
 export default function Sidebar() {
+  const navigate = useNavigate(); // ← define navigate inside the component
+
   return (
     <aside className="h-screen col-span-2 bg-neutral-900 text-neutral-200 flex flex-col">
       {/* Header */}
@@ -19,16 +22,23 @@ export default function Sidebar() {
 
       {/* Menu */}
       <nav className="flex-1 px-2 space-y-2">
-        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
-          <Home className="h-5 w-5" /> Home
-        </button>
-        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
+       
+        <button
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition"
+          onClick={() => navigate("/")}
+        >
           <Folder className="h-5 w-5" /> Projects
         </button>
-        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
-          <CheckSquare className="h-5 w-5" /> Tasks
+        <button
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition"
+          onClick={() => navigate("/mytask")}
+        >
+          <CheckSquare className="h-5 w-5" /> MyTasks
         </button>
-        <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition">
+        <button
+          className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-neutral-800 transition"
+          
+        >
           <Bell className="h-5 w-5" /> Notifications
         </button>
       </nav>
