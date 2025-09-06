@@ -4,9 +4,10 @@ import { validate } from "../middlewares/validate.mjs";
 import { projectSchema } from "../validators/project.validators.mjs";
 import { isProjectOwner, isProjectMember } from "../middlewares/authz.mjs";
 import { auth } from "../middlewares/auth.mjs";
+import upload from "../middlewares/upload.mjs";
 const router = express.Router();
 
-router.post("/create", auth, validate(projectSchema), createProject);
+router.post("/create", auth, upload.single('image'), validate(projectSchema), createProject);
 router.get("/list", auth, listProjects);
 router.get("/:id", auth, isProjectMember, getProjectById);
 router.put("/:id", auth, isProjectOwner, updateDescription);

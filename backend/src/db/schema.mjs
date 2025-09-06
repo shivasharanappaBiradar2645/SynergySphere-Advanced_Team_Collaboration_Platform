@@ -14,6 +14,8 @@ export const projects = sqliteTable("projects", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
   description: text("description"),
+  tags: text("tags"),
+  imageUrl: text("imageUrl"),
   createdBy: integer("created_by")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -53,8 +55,32 @@ export const tasks = sqliteTable("tasks", {
 
 export const notifications= sqliteTable("notifications",{
     id: integer("id").primaryKey({ autoIncrement: true }),
-    userId: integer("assignee").references(() => users.id, { onDelete: "set null" }),
+    userId: integer("user_id").references(() => users.id, { onDelete: "set null" }),
+    projectId: integer("project_id").references(() => projects.id, { onDelete: "cascade" }),
     type: text("type").default("Task ASSIGNED"),
     message: text("message"),
     isRead: integer("is_read").default(0),
+});
+
+export const discussions = sqliteTable("discussions", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    projectId: integer("project_id")
+        .notNull()
+        .references(() => projects.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+        .default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const discussionMessages = sqliteTable("discussion_messages", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    discussionId: integer("discussion_id")
+        .notNull()
+        .references(() => discussions.id, { onDelete: "cascade" }),
+    userId: integer("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    message: text("message").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+        .default(sql`CURRENT_TIMESTAMP`),
 });

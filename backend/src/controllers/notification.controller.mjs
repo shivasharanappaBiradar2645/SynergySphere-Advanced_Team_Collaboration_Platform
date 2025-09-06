@@ -1,4 +1,4 @@
-import { db } from "../db/connection.mjs";
+import { db } from "../db/db.mjs";
 import { notifications } from "../db/schema.mjs";
 import { eq, and } from "drizzle-orm";
 
@@ -21,6 +21,13 @@ export const notificationStream = (req, res) => {
   });
 };
 
+export const sendNotification = (userId, message) => {
+    const userClients = clients.filter(c => c.userId === userId);
+    userClients.forEach(c => c.res.write(`data: ${JSON.stringify(message)}
+
+`));
+}
+
 // Poll DB for unread notifications
 export const pollNotifications = async () => {
   for (const client of clients) {
@@ -30,7 +37,9 @@ export const pollNotifications = async () => {
       .where(and(eq(notifications.userId, client.userId), eq(notifications.isRead, 0)));
 
     if (unread.length > 0) {
-      client.res.write(`data: ${JSON.stringify(unread)}\n\n`);
+      client.res.write(`data: ${JSON.stringify(unread)}
+
+`);
     }
   }
 };
@@ -38,22 +47,30 @@ setInterval(pollNotifications, 5000);
 
 // REST API — get unread
 export const getUnread = async (req, res) => {
-  const userId = req.user.id;
-  const result = await db
-    .select()
-    .from(notifications)
-    .where(and(eq(notifications.userId, userId), eq(notifications.isRead, 0)));
-  res.json(result);
+    try{
+        const userId = req.user.id;
+        const result = await db
+            .select()
+            .from(notifications)
+            .where(and(eq(notifications.userId, userId), eq(notifications.isRead, 0)));
+        res.json({success: true, data: result});
+    } catch (err) {
+        res.status(500).json({success: false, error: err.message});
+    }
 };
 
 // REST API — mark as read
 export const markAsRead = async (req, res) => {
-  const userId = req.user.id;
-  const { id } = req.params;
+    try{
+        const userId = req.user.id;
+        const { id } = req.params;
 
-  await db.update(notifications)
-    .set({ isRead: 1 })
-    .where(and(eq(notifications.id, +id), eq(notifications.userId, userId)));
+        await db.update(notifications)
+            .set({ isRead: 1 })
+            .where(and(eq(notifications.id, +id), eq(notifications.userId, userId)));
 
-  res.json({ message: "Notification marked as read" });
+        res.json({ success: true, message: "Notification marked as read" });
+    } catch (err) {
+        res.status(500).json({success: false, error: err.message});
+    }
 };

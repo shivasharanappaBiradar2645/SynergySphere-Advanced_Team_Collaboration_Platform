@@ -1,6 +1,6 @@
-import { db } from "../db/connection.mjs";
+import { db } from "../db/db.mjs";
 import { projects, tasks } from "../db/schema.mjs";
-import { eq } from "drizzle-orm";
+import { eq , and} from "drizzle-orm";
 
 
 export const createTask = async (req, res) => {
@@ -16,9 +16,9 @@ export const createTask = async (req, res) => {
       status,
     }).returning();
 
-    res.json({ message: "Task created", task: result[0] });
+    res.json({ success: true, data: { task: result[0] } });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -27,9 +27,9 @@ export const listTasks = async (req, res) => {
   try {
     const { projectId } = req.body;
     const result = await db.select().from(tasks).where(and(eq(tasks.projectId, projectId),eq(tasks.deleted,0)));
-    res.json(result);
+    res.json({ success: true, data: result });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -39,9 +39,9 @@ export const updateTasks = async (req, res) => {
         await db.update(tasks).values({
             status: newStatus
         }).where(eq(taskId,tasks.id));
-        res.json({message: "success"});
+        res.json({ success: true, message: "success" });
     } catch(err){
-        res.status(500).json({error: err.message});
+        res.status(500).json({ success: false, error: err.message });
     }
 }
 
@@ -51,8 +51,8 @@ export const deleteTasks = async (req,res) => {
         await db.update(tasks).set({deleted: 1}).where(
             eq(taskId,tasks.id)
         );
-        res.json({message:"deleted"})
+        res.json({ success: true, message:"deleted"})
     }catch(err){
-        res.status(500).json({error: err.message})
+        res.status(500).json({ success: false, error: err.message})
     }
 }

@@ -1,6 +1,6 @@
 import express from "express";
-import { auth } from "../middleware/auth.mjs";
-import { notificationStream, getUnread, markAsRead } from "../controllers/notificationController.mjs";
+import { auth } from "../middlewares/auth.mjs";
+import { notificationStream, getUnread, markAsRead } from "../controllers/notification.controller.mjs";
 
 const router = express.Router();
 

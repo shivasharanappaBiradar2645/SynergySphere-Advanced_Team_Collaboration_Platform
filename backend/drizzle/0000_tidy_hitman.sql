@@ -1,9 +1,39 @@
+CREATE TABLE `discussion_messages` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`discussion_id` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	`message` text NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`discussion_id`) REFERENCES `discussions`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `discussions` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`project_id` integer NOT NULL,
+	`title` text NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `notifications` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer,
+	`project_id` integer,
+	`type` text DEFAULT 'Task ASSIGNED',
+	`message` text,
+	`is_read` integer DEFAULT 0,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null,
+	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
 CREATE TABLE `project_members` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`project_id` integer NOT NULL,
 	`user_id` integer NOT NULL,
 	`role` text DEFAULT 'member',
 	`added_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`deleted` integer DEFAULT 0,
 	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -12,8 +42,11 @@ CREATE TABLE `projects` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`description` text,
+	`tags` text,
+	`imageUrl` text,
 	`created_by` integer NOT NULL,
 	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`deleted` integer DEFAULT 0,
 	FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
@@ -26,6 +59,7 @@ CREATE TABLE `tasks` (
 	`due_date` text,
 	`status` text DEFAULT 'To-Do',
 	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`deleted` integer DEFAULT 0,
 	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`assignee`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE set null
 );
