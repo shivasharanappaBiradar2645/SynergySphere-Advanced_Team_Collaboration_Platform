@@ -111,14 +111,14 @@
 
         <div class="section">
             <h2>Discussions</h2>
-            <form id="create-discussion-form">
+            <form id="discussion-form">
+                <select name="action">
+                    <option value="create">Create Discussion</option>
+                    <option value="list">List Discussions</option>
+                </select>
                 <input type="number" name="projectId" placeholder="Project ID" required>
-                <input type="text" name="title" placeholder="Discussion Title" required>
-                <button type="submit">Create Discussion</button>
-            </form>
-            <form id="list-discussions-form">
-                <input type="number" name="projectId" placeholder="Project ID" required>
-                <button type="submit">List Discussions</button>
+                <input type="text" name="title" placeholder="Discussion Title">
+                <button type="submit">Submit</button>
             </form>
             <ul id="discussions-list"></ul>
         </div>
@@ -341,52 +341,48 @@
             console.log(result);
         });
 
-        const createDiscussionForm = document.getElementById('create-discussion-form');
-        createDiscussionForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(createDiscussionForm);
-            const data = Object.fromEntries(formData.entries());
-
-            const response = await fetch(`${API_URL}/discussions`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-            console.log(result);
-            alert(result.data ? 'Discussion created' : result.error);
-        });
-
-        const listDiscussionsForm = document.getElementById('list-discussions-form');
+        const discussionForm = document.getElementById('discussion-form');
         const discussionsList = document.getElementById('discussions-list');
-        listDiscussionsForm.addEventListener('submit', async (e) => {
+        discussionForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(listDiscussionsForm);
+            const formData = new FormData(discussionForm);
             const data = Object.fromEntries(formData.entries());
-            const projectId = data.projectId;
+            const action = data.action;
 
-            const response = await fetch(`${API_URL}/discussions/${projectId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                discussionsList.innerHTML = '';
-                result.data.forEach(discussion => {
-                    const li = document.createElement('li');
-                    li.textContent = `${discussion.id}: ${discussion.title}`;
-                    discussionsList.appendChild(li);
+            if (action === 'create') {
+                const response = await fetch(`${API_URL}/discussions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
                 });
-            } else {
-                alert(result.error);
+
+                const result = await response.json();
+                console.log(result);
+                alert(result.data ? 'Discussion created' : result.error);
+            } else if (action === 'list') {
+                const projectId = data.projectId;
+                const response = await fetch(`${API_URL}/discussions?projectId=${projectId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    discussionsList.innerHTML = '';
+                    result.data.forEach(discussion => {
+                        const li = document.createElement('li');
+                        li.textContent = `${discussion.id}: ${discussion.title}`;
+                        discussionsList.appendChild(li);
+                    });
+                } else {
+                    alert(result.error);
+                }
+                console.log(result);
             }
-            console.log(result);
         });
 
         const addMessageForm = document.getElementById('add-message-form');

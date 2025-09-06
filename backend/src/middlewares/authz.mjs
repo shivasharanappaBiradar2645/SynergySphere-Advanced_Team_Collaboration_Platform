@@ -2,10 +2,21 @@ import { db } from "../db/db.mjs";
 import { projectMembers, tasks } from "../db/schema.mjs";
 import { and, eq } from "drizzle-orm";
 
+
+import { discussions } from "../db/schema.mjs";
+
 export const isProjectMember = async (req, res, next) => {
   try {
-    const projectId = req.params.id || req.body.projectId;
+    let projectId = req.params.projectId || req.body.projectId;
     const userId = req.user.id;
+    const discussionId = req.params.discussionId || req.body.discussionId;
+
+    if(!projectId && discussionId) {
+        const [discussion] = await db.select().from(discussions).where(eq(discussions.id, discussionId));
+        if(discussion) {
+            projectId = discussion.projectId;
+        }
+    }
 
     if (!projectId) {
       return res.status(400).json({ error: "Project ID is required" });
@@ -32,9 +43,10 @@ export const isProjectMember = async (req, res, next) => {
   }
 };
 
+
 export const isProjectOwner = async (req, res, next) => {
     try {
-        const projectId = req.params.id || req.body.projectId;
+        const projectId = req.params.projectId || req.body.projectId;
         const userId = req.user.id;
 
         if (!projectId) {

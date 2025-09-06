@@ -17,7 +17,7 @@ export const createDiscussion = async (req, res) => {
 
 export const getDiscussions = async (req, res) => {
     try {
-        const { projectId } = req.params;
+        const { projectId } = req.query;
         const results = await db.select().from(discussions).where(eq(discussions.projectId, projectId));
         res.json({ success: true, data: results });
     } catch (err) {
