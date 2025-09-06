@@ -78,7 +78,7 @@ export const addMember = async (req, res) => {
 
 export const removeMember = async (req, res) => {
     try {
-        const { id, userId } = req.params;
+        const { id, userId } = req.body;
         await db.delete(projectMembers).where(and(eq(projectMembers.projectId, id), eq(projectMembers.userId, userId)));
         res.json({ success: true, message: "Member removed" });
     } catch (err) {
