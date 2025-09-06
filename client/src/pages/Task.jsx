@@ -25,7 +25,7 @@ export default function Projects() {
                 className={"col-span-4 md:col-span-3 bg-black rounded-lg min-h-full overflow-y-scroll grid grid-cols-1 grid-rows-[7%_93%]"}
             >
                 {/*header*/}
-                <Header title={"Projects"}/>
+                <Header title={"Tasks"}/>
                 <hr/>
                 <div>
                     {/* main content */}
