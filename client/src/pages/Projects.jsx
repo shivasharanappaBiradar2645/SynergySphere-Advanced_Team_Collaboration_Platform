@@ -6,14 +6,28 @@ export default function Projects() {
         const sidebar = document.getElementById('sidebar');
         const main = document.getElementById('main');
 
-        if (sidebar.classList.contains('hidden')) {
-            sidebar.classList.remove('hidden');
-            main.classList.remove('col-span-4');
-            main.classList.add('col-span-3');
+        const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+
+        if (!isDesktop) {
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                const onMainClick = (e) => {
+                    if (!sidebar.contains(e.target)) {
+                        sidebar.classList.add('hidden');
+                    }
+                };
+                main.addEventListener('click', onMainClick, {once: true});
+            } else {
+                sidebar.classList.add('hidden');
+            }
         } else {
-            sidebar.classList.add('hidden');
-            main.classList.remove('col-span-3');
-            main.classList.add('col-span-4');
+            if (sidebar.style.display === 'none') {
+                sidebar.style.display = '';
+                main.style.gridColumn = '';
+            } else {
+                sidebar.style.display = 'none';
+                main.style.gridColumn = '1 / -1';
+            }
         }
     }
 
@@ -22,9 +36,14 @@ export default function Projects() {
             {/*sidebar*/}
             <div
                 id="sidebar"
-                className={"col-span-1 bg-white min-h-full hidden md:block"}
+                className={`
+                    md:min-w-full
+                    hidden md:block
+                    md:static md:col-span-1 
+                    absolute top-0 left-0 z-50 w-3/4 h-full bg-white
+                `}
             >
-
+                {/* sidebar content */}
             </div>
 
             {/*main*/}
@@ -38,8 +57,6 @@ export default function Projects() {
                     <h1 className={"px-5 text-xl"}>Projects</h1>
                 </div>
                 <hr/>
-
-
                 <div>
                     {/* main content */}
                 </div>
