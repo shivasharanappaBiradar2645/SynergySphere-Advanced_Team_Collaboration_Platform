@@ -1,13 +1,12 @@
-import {useState} from 'react'
-import viteLogo from '/vite.svg'
+import Sidebar from "../src/components/sidebar"
 
 function App() {
-    const [count, setCount] = useState(0)
+    
 
     return (
-        <>
-            <h1 className={"text-3xl"}>Hello World</h1>
-        </>
+    <div >
+    <Sidebar/>
+    </div>
     )
 }
 
